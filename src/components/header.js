@@ -2,15 +2,25 @@ import * as React from "react"
 import PropTypes from "prop-types"
 import { Link } from "gatsby"
 import gtasbyLogo from "../images/gatsby-icon.png"
+import netlifyIdentity from "netlify-identity-widget"
 
-const Header = ({ siteTitle }) => (
+class Header extends React.Component {
+
+componentDidMount(){
+  netlifyIdentity.init()
+}
+  render() {
+
+    const {siteTitle}=this.props
+
+    return (
   <header
     style={{
       background: `rebeccapurple`,
       marginBottom: `1.45rem`,
     }}
   >
-
+ < div data-netlify-identity-menu />
 
     
     <div
@@ -40,6 +50,8 @@ const Header = ({ siteTitle }) => (
     
   </header>
 )
+        }
+      }
 
 Header.propTypes = {
   siteTitle: PropTypes.string,
