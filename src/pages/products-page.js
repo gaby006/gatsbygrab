@@ -1,34 +1,57 @@
 import * as React from 'react'
-import {graphql, graphsql} from 'gatsby'
+import { graphql, graphsql } from 'gatsby'
 import Layout from '../components/layout'
-import {Link} from 'gatsby'
+import { Link } from 'gatsby'
+import netlifyIdentity from 'netlify-identity-widget'
 
-const Products=({data: { allContentfulProduct }})=>(
-    
-<Layout>
+class Products extends React.Component {
 
-{
-
-allContentfulProduct.edges.map(({node})=>(
-
-
-<div key={node.id}>
- <h1>{node.name}</h1>
-    <Link to={`/products/${node.slug}`}>{node.slug}</Link>
-    <img style={{width :"50px"}} src={node.image.file.url} />
-</div>
-
-
-
-))
-
+state ={
+    products: []
 }
 
-</Layout>
+    componentDidMount() {
+    
+        this.getProducts()
+    }
 
-) 
+    getProducts=()=>{
 
-export const query=graphql`
+        const allProducts=this.props.data.allContentfulProduct.edges;
+
+        const products=netlifyIdentity.currentUser()!==null?allProducts:allProducts.filter(({node})=>!node.private)
+
+
+         this.setState({products})
+
+    }
+
+    render() {
+        const {products}=this.state
+        return (<Layout>
+              {
+                products.map(({ node }) => (
+
+
+                    <div key={node.id}>
+                        <h1>{node.name}</h1>
+                        <Link to={`/products/${node.slug}`}>{node.slug}</Link>
+                        <img style={{ width: "50px" }} src={node.image.file.url} />
+                    </div>
+
+
+
+                ))
+
+            }
+
+        </Layout>
+
+        )
+    }
+}
+
+export const query = graphql`
 query MyQuery5 {
     allContentfulProduct(limit: 10) {
       totalCount
