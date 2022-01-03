@@ -22,8 +22,39 @@ exports.createPages = async ({ graphql, actions }) => {
         }
       }
     }
+
+    allContentfulProduct {
+        totalCount
+        edges {
+          node {
+            slug
+            name
+            price
+            spaceId
+            description
+            private
+            image {
+              file {
+                url
+              }
+            }
+          }
+        }
+      }
   }
   `)
+
+
+  result.data.allContentfulProduct.edges.forEach(({node}) =>{
+
+    createPage({
+      path: `/products/${node.slug}` ,
+      component : require.resolve("./src/templates/product-template.js"),
+      context : {'slug': node.slug}
+
+    })
+
+  })
 
   result.data.allMarkdownRemark.edges.forEach(({node}) => {
     createPage({
@@ -31,7 +62,7 @@ exports.createPages = async ({ graphql, actions }) => {
       component: require.resolve("./src/templates/post-template.js"),
       context: { slug: node.fields.slug},
     })
-  });
+  })
   
 }
 
